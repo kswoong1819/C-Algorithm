@@ -1,53 +1,59 @@
 #include <stdio.h>
-
-int data[10] = { 4, 1, 2, 3, 9, 7, 8, 6, 10, 5 };
-
-void quick_sort(int* data, int start, int end) {
-    if (start >= end) {
-        // ¿ø¼Ò°¡ 1°³ÀÎ °æ¿ì
-        return;
-    }
-
-    int pivot = start;
-    int i = pivot + 1; // ¿ŞÂÊ Ãâ¹ß ÁöÁ¡ 
-    int j = end; // ¿À¸¥ÂÊ Ãâ¹ß ÁöÁ¡
-    int temp;
-
-    while (i <= j) {
-        // Æ÷ÀÎÅÍ°¡ ¾ù°¥¸±¶§±îÁö ¹İº¹
-        while (i <= end && data[i] <= data[pivot]) {
+ 
+int sorted[8]; // ì •ë ¬ëœ ë°°ì—´
+ 
+void merge(int *data, int start, int mid, int end){
+    int i = start;
+    int j = mid+1;
+    int k = start;
+    
+    while(i <= mid && j <= end)    {
+        if(data[i] <= data[j]){
+            sorted[k] = data[i];
             i++;
+        }else{
+            // data[i] > data[j]
+            sorted[k] = data[j];
+            j++;
         }
-        while (j > start && data[j] >= data[pivot]) {
-            j--;
+        k++;
+    }
+    if(i > mid){
+        for(int t = j; t<=end; t++){
+            sorted[k] = data[t];
+            k++;
         }
-
-        if (i > j) {
-            // ¾ù°¥¸²
-            temp = data[j];
-            data[j] = data[pivot];
-            data[pivot] = temp;
-        }
-        else {
-            // i¹øÂ°¿Í j¹øÂ°¸¦ ½º¿Ò
-            temp = data[i];
-            data[i] = data[j];
-            data[j] = temp;
+    }else{
+        for(int t = i; t<=mid; t++){
+            sorted[k] = data[t];
+            k++;
         }
     }
-
-    // ºĞÇÒ °è»ê
-    quick_sort(data, start, j - 1);
-    quick_sort(data, j + 1, end);
+    
+    // ì •ë ¬ëœ ë°°ì—´ì„ ì‚½ì…
+    for(int t=start; t<=end; t++){
+        data[t] = sorted[t];
+    } 
+} 
+ 
+void merge_sort(int *data, int start, int end){
+    if(start < end){
+        int mid = (start+end)/2;
+        merge_sort(data, start, mid); // ì¢Œì¸¡ ì •ë ¬ 
+        merge_sort(data, mid+1, end); // ìš°ì¸¡ ì •ë ¬ 
+        merge(data, start, mid, end);
+    }
 }
-
-int main(void) {
-    quick_sort(data, 0, 9);
-
-    // °á°ú È®ÀÎ
-    for (int i = 0; i < 10; i++) {
+ 
+int main(void){
+ 
+    int data[8] = {3, 6, 7, 1, 2, 4, 8, 5};
+    
+    merge_sort(data, 0, 7);
+    
+    // ê²°ê³¼ í™•ì¸
+    for(int i=0; i<8; i++){
         printf("%d ", data[i]);
-    }
-
+    } 
     return 0;
 }
