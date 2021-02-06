@@ -17,10 +17,10 @@ void bfs(int n, int k, int st) {
 		int q = queue[front++];
 		for (int i = 1; i <= n; i++) {
 			if (arr[q][i] > 0) {
+				int tmp = dp[q][k-1] + arr[q][i];
 				for (int j = 1; j <= k; j++) {
-					int tmp = dp[q][j-1] + arr[q][i];
-					if (dp[i][j] > tmp && dp[i][j-1] != tmp) {
-						dp[i][j] = tmp;
+					if (dp[i][k-1] > tmp && dp[i][k-1] != tmp) {
+						swap(dp[i][j], tmp);
 						flag = 1;
 					}
 				}
