@@ -140,10 +140,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BOJ_2213.c" />
+    <Text Include="input.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="input.txt" />
+    <ClCompile Include="BOJ_11779.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
