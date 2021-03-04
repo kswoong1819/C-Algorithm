@@ -2,60 +2,71 @@
 #include <malloc.h>
 
 #define min(a, b) (a>b ? b : a)
+#define MaxLen 1001
+#define MaxSz 10e10
 
-typedef struct {
-	int st, ed, wh;
-	struct node* nxt;
-}node;
+int arr[MaxLen][MaxLen];
+long long dk[MaxLen][2];
+int cnt = 0;
+int result[MaxLen];
 
-node* arr[1001];
-long long dk[1001];
-
-void bfs(int s, int e) {
-	node* head, * tmp, * new, * use, *re, *fr;
-	head = (node*)malloc(sizeof(node));
-	new = (node*)malloc(sizeof(node));
-	head->nxt = arr[s];
-	use = head;
-	while (use)
+void bfs(int n, int start, int end) {
+	int queue[MaxLen * 10];
+	int front = 0, rear = 0;
+	queue[rear++] = start;
+	while (front < rear)
 	{
-		tmp = use->nxt;
-		while (tmp) {
-			dk[tmp->ed] = min(dk[tmp->ed], tmp->wh + dk[tmp->st]);
-			if (arr[tmp->ed]) {
-				fr = (node*)malloc(sizeof(node));
-				re->nxt = arr[tmp->ed];
-				while (re)
-				{
-					fr->nxt = new;
-					new = arr[tmp->ed];
+		int tmp = queue[front++];
+		for (int i = 1; i <= n; i++) {
+			if (arr[tmp][i] >= 0 && arr[tmp][i] < 1000001) {
+				int dif = min(dk[i][0], dk[tmp][0] + arr[tmp][i]);
+				if (dif < dk[i][0]) {
+					dk[i][0] = dif;
+					dk[i][1] = tmp;
+					if (end == i)
+						continue;
+					queue[rear++] = i;
 				}
 			}
-			tmp = tmp->nxt;
 		}
 	}
-
 	return;
+}
+
+void road(int start, int end) {
+	if (start == end) {
+		return;
+	}
+	result[cnt++] = dk[end][1];
+	road(start, dk[end][1]);
 }
 
 int main() {
 	int n, m, s, e, w, fs, fe;
-	node* tmp;
 	freopen("input.txt", "r", stdin);
 	scanf("%d %d", &n, &m);
 	for (int i = 1; i <= n; i++) {
-		dk[i] = 10e+10;
+		dk[i][0] = MaxSz;
+		dk[i][1] = 0;
+		for (int j = 1; j <= n; j++) {
+			arr[i][j] = 1000001;
+		}
 	}
-	for (int i = 0; i < m; i++)	{
+	for (int i = 0; i < m; i++) {
 		scanf("%d %d %d", &s, &e, &w);
-		tmp = (node*)malloc(sizeof(node));
-		tmp->st = s;
-		tmp->ed = e;
-		tmp->wh = w;
-		tmp->nxt = arr[s];
-		arr[s] = tmp;
+		if (arr[s][e] > w)
+			arr[s][e] = w;
 	}
 	scanf("%d %d", &fs, &fe);
-	dk[fs] = 0;
-	bfs(fs, fe);
+	dk[fs][0] = 0;
+	dk[fs][1] = 1;
+	bfs(n, fs, fe);
+	printf("%lld\n", dk[fe][0]);
+	result[cnt++] = fe;
+	road(fs, fe);
+	printf("%d\n", cnt);
+	for (int i = cnt-1; i >= 0; i--) {
+		printf("%d ", result[i]);
+	}
+	return 0;
 }
