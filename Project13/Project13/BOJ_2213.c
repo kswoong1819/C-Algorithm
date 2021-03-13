@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <malloc.h>
 
-#define MaxSz 100001
+#define MaxSz 1000001
+#define max(a,b) (a>b ? a : b)
 
 typedef struct nd {
 	int e;
@@ -9,32 +10,34 @@ typedef struct nd {
 }node;
 
 node* arr[MaxSz];
-int num[MaxSz], visited[MaxSz];
+int dp[MaxSz][2];
+int visited[MaxSz] = { 0, };
 
-int dfs(int x) {
-	node* tmp = arr[x];
-	int val = 1;
-
-	visited[x] = 1;
+int dfs(int k) {
+	node* tmp = arr[k];
+	visited[k] = 1;
 	while (tmp) {
 		if (visited[tmp->e]) {
 			tmp = tmp->nxt;
 			continue;
 		}
-		val += dfs(tmp->e);
+		dfs(tmp->e);
+		dp[k][0] += dp[tmp->e][1];
+		dp[k][1] += max(dp[tmp->e][0], dp[tmp->e][1]);
 		tmp = tmp->nxt;
 	}
-	num[x] = val;
-	return val;
 }
 
 int main() {
-	int n, r, q, u, v, k;
+	int n, v, u;
 	node* tmp;
 	freopen("input.txt", "r", stdin);
-	scanf("%d %d %d", &n, &r, &q);
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++) {
+		dp[i][0] = 1;
+	}
 	for (int i = 1; i < n; i++) {
-		scanf("%d %d", &u, &v);
+		scanf("%d %d", &v, &u);
 		tmp = (node*)malloc(sizeof(node));
 		tmp->e = v;
 		tmp->nxt = arr[u];
@@ -45,11 +48,7 @@ int main() {
 		tmp->nxt = arr[v];
 		arr[v] = tmp;
 	}
-	dfs(r);
-	for (int i = 0; i < q; ++i) {
-		scanf("%d", &k);
-		printf("%d\n", num[k]);
-	}
-
+	dfs(1);
+	printf("%d\n", n - max(dp[1][0], dp[1][1]));
 	return 0;
 }
