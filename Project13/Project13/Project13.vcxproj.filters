@@ -23,8 +23,5 @@
     <ClCompile Include="BOJ_11054.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="BOJ_12015.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

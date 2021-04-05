@@ -8,7 +8,6 @@ int main() {
 	scanf("%d", &n);
 
 	int* arr = (int*)calloc(n, sizeof(int));
-	arr[0] = -1000000000;
 	for (int i = 0; i < n; i++) {
 		scanf("%d", &a);
 		if (arr[p] < a)
