@@ -18,16 +18,17 @@ void go(int n) {
 		if (visited[i] == 0)
 			queue[rear++] = i;
 	}
-	while (front <= rear) {
+	while (front < rear) {
 		int q = queue[front++];
 		printf("%d ", q);
 		node* use, * tmp;
 		use = arr[q];
-		while (use->nxt != NULL) {
-			tmp = use->nxt;
+		while (use != NULL) {
+			tmp = use;
 			visited[tmp->e]--;
 			if (visited[tmp->e] == 0)
 				queue[rear++] = tmp->e;
+			use = use->nxt;
 		}
 	}
 	return;

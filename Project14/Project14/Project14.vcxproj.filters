@@ -20,7 +20,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BOJ_2252.c">
+    <ClCompile Include="BOJ_1806.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
