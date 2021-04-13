@@ -1,58 +1,62 @@
+#include <stdlib.h>
 #include <stdio.h>
-#include <malloc.h>
-#include <vector>
-using namespace std;
 
-#define MaxSz 200010
+#define N 200000
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-int n;
-int value[MaxSz];
-int visited[MaxSz];
+struct node {
+	size_t n, c;
+	int *arr;
+} list[N];
 
-int max(vector<int> &dp) {
-	int x = 0, maxVal = 0;
-	while (dp[x] > 0) {
-		if (maxVal < dp[x])
-			maxVal = dp[x];
-		x++;
+int weights[N];
+
+struct result {
+	int inc, non;
+} res[N];
+
+void add_parent(int c, int p) {
+	struct node *n = &list[p];
+
+	if (n->n == n->c) {
+		n->c = n->c ? n->c*2 : 1;
+		n->arr = realloc(n->arr, sizeof n->arr[0] * n->c);
 	}
-	return maxVal;
+
+	n->arr[n->n++] = c;
 }
 
-void dfs(vector<vector<int>> &arr, vector<vector<int>> &dp, int k) {
-	visited[k] = 1;
-	for (int i = 0; i < arr[k].size(); i++) {
-		int nxt = arr[k][i];
-		if (nxt > n) return;
-		if (visited[nxt] == 1) continue;
-		dfs(arr, dp, nxt);
-		dp[k][i] += value[k] * value[nxt];
-		dp[k][i] += dp[nxt][arr[nxt].size()];
-		int sum = max(dp[nxt]);
-		for (int j = 0; j <= arr[k].size(); j++) {
-			if (sum == 0) break;
-			if (i == j)	continue;
-			dp[k][j] += sum;
-		}
+void solve(int p) {
+	struct node *n = &list[p];
+	if (n->n == 0) {
+		return;
 	}
-	return;
+
+	for (size_t i = 0; i < n->n; i++) {
+		solve(n->arr[i]);
+		res[p].non += MAX(res[n->arr[i]].inc, res[n->arr[i]].non);
+	}
+	for (size_t i = 0; i < n->n; i++) {
+		int cur = res[p].non + weights[p]*weights[n->arr[i]];
+		if (res[n->arr[i]].inc > res[n->arr[i]].non)
+			cur += res[n->arr[i]].non - res[n->arr[i]].inc;
+		
+		res[p].inc = MAX(res[p].inc, cur);
+	}
 }
 
-int main() {
-	int num;
-	freopen("input.txt", "r", stdin);
+int main(void) {
+	int n;
 	scanf("%d", &n);
-	vector<vector<int>> arr(n+1);
-	vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
-	for (int i = 2; i <= n; i++) {
-		scanf("%d", &num);
-		arr[num].push_back(i);
-	}
-	for (int i = 1; i <= n; i++) {
-		scanf("%d", &value[i]);
-	}
 
-	dfs(arr, dp, 1);
-	printf("%d\n", max(dp[1]));
-	return 0;
+	for (int i = 1; i < n; i++) {
+		int p;
+		scanf("%d", &p);
+		add_parent(i, p-1);
+	}
+	for (int i = 0; i < n; i++)
+		scanf("%d", &weights[i]);
+
+	solve(0);
+	printf("%d\n", MAX(res[0].inc, res[0].non));
 }
