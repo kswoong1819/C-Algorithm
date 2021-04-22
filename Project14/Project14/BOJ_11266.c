@@ -10,6 +10,29 @@ typedef struct nd {
 
 int check[MaxSz];
 node* arr[MaxSz];
+int visited[MaxSz] = { 0, };
+int result = 0;
+int result_arr[MaxSz];
+int flag = 0;
+
+void go(int init, int n, int k) {
+	node* tmp = arr[n];
+	while (tmp != NULL) {
+		if (k >= 2 && tmp->p == init) {
+			check[init]--;
+			return;
+		}
+		if (visited[tmp->p]) {
+			tmp = tmp->nxt;
+			continue;
+		}
+		visited[tmp->p] = 1;
+		go(init, tmp->p, k+1);
+		visited[tmp->p] = 0;
+		tmp = tmp->nxt;
+	}
+	return;
+}
 
 int main() {
 	int v, e, a, b;
@@ -32,7 +55,17 @@ int main() {
 		arr[a] = tmp;
 	}
 	for (int i = 1; i <= v; i++) {
-		int visited[MaxSz] = { 0, };
-		go();
+		if (check[i] >= 2) {
+			visited[i] = 1;
+			go(i, i, 0);
+			visited[i] = 0;
+			if (check[i] > 0)
+				result_arr[result++] = i;
+		}
 	}
+	printf("%d\n", result);
+	for (int i = 0; i < result; i++) {
+		printf("%d ", result_arr[i]);
+	}
+	return 0;
 }
